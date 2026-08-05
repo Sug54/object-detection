@@ -1,12 +1,12 @@
-# Object Detection (YOLO + Flask)
+# Object Detection (YOLO)
 
-Live object detection from a webcam using [Ultralytics YOLO11](https://docs.ultralytics.com/) and a Flask web interface. Frames are captured from the camera, run through the model with object tracking, and streamed to the browser with bounding boxes drawn on each detection.
+Live object detection from a webcam using [Ultralytics YOLO](https://docs.ultralytics.com/). Frames are captured from the camera, run through the model with object tracking, and shown in an OpenCV window with bounding boxes drawn on each detection.
 
 ## Requirements
 
 - Python 3.13+ (tested with the included virtual environment)
 - A connected USB webcam (default device index `0`)
-- Linux with camera access (e.g. Raspberry Pi)
+- Linux with camera access (e.g. Raspberry Pi) or Windows with a working webcam
 
 ## Setup
 
@@ -14,11 +14,18 @@ Live object detection from a webcam using [Ultralytics YOLO11](https://docs.ultr
 
 **Always activate the virtual environment before running any scripts in this folder.**
 
-From the `object_detection` directory:
+From the `object-detection` directory:
 
 ```bash
-cd object_detection
+cd object-detection
 source .venv/bin/activate
+```
+
+On Windows (PowerShell):
+
+```powershell
+cd object-detection
+.\.venv\Scripts\Activate.ps1
 ```
 
 Your shell prompt should show `(.venv)` when the environment is active.
@@ -34,30 +41,25 @@ deactivate
 If `.venv` does not exist yet, create and install dependencies:
 
 ```bash
-cd object_detection
+cd object-detection
 python3 -m venv .venv
 source .venv/bin/activate
-pip install flask ultralytics opencv-python
+pip install ultralytics opencv-python
 ```
 
-The YOLO weights file `yolo11n.pt` is included in this folder. On first run, Ultralytics may download additional model assets if needed.
+The YOLO weights file is included in this folder. On first run, Ultralytics may download additional model assets if needed.
 
 ## Running the app
 
 With the virtual environment activated:
 
 ```bash
-python app.py
+python yolo_camera.py
 ```
 
-Then open a browser to:
+A window opens immediately with the live camera feed and YOLO detections. Detection details (class name, confidence, object count) are also printed to the terminal.
 
-- **Local:** [http://localhost:5000](http://localhost:5000)
-- **From another device on the network:** `http://<your-pi-ip>:5000`
-
-The page shows a live MJPEG stream with detected objects labeled and tracked across frames. Detection details (class name, confidence, object count) are printed to the terminal.
-
-Press `Ctrl+C` in the terminal to stop the server.
+Press `q` in the video window to quit.
 
 ## Camera test scripts
 
@@ -78,13 +80,9 @@ python camera_capture_test.py
 ## Project structure
 
 ```
-object_detection/
-├── app.py                  # Flask web server
-├── yolo_camera.py          # YOLO model, camera capture, and frame generator
-├── templates/
-│   └── index.html          # Web page with live video feed
-├── yolo11n.pt              # YOLO11 nano model weights (in use)
-├── yolo11s.pt              # YOLO11 small model weights (alternate)
+object-detection/
+├── yolo_camera.py          # YOLO model, camera capture, and live window
+├── yolo26n.pt              # YOLO nano model weights (in use)
 ├── camera_test.py          # Live camera preview utility
 ├── camera_capture_test.py  # Single-frame capture utility
 └── .venv/                  # Python virtual environment (do not commit)
@@ -94,16 +92,15 @@ object_detection/
 
 Detection settings live in `yolo_camera.py`:
 
-| Setting   | Default      | Description                          |
-|-----------|--------------|--------------------------------------|
-| Model     | `yolo11n.pt` | YOLO weights file                    |
-| Camera    | `0`          | OpenCV device index                  |
-| Resolution| 640×480      | Capture size                         |
-| Confidence| `0.7`        | Minimum detection confidence         |
-| IoU       | `0.5`        | Overlap threshold for NMS            |
-| Tracking  | enabled      | Objects persist with IDs across frames |
+| Setting    | Default      | Description                           |
+|------------|--------------|---------------------------------------|
+| Model      | `yolo26n.pt` | YOLO weights file                     |
+| Camera     | `0`          | OpenCV device index                   |
+| Resolution | 256×256      | Capture size                          |
+| Confidence | `0.6`        | Minimum detection confidence          |
+| Tracking   | enabled      | Objects persist with IDs across frames|
 
-To use the larger model, change the model path in `yolo_camera.py`:
+To use a different model, change the model path in `yolo_camera.py`:
 
 ```python
 model = YOLO("yolo11s.pt")
@@ -112,19 +109,15 @@ model = YOLO("yolo11s.pt")
 ## Troubleshooting
 
 **"Camera not found"**
-- Confirm the webcam is plugged in: `ls /dev/video*`
+- Confirm the webcam is plugged in
 - Make sure no other process is using the camera
 - Try a different device index in `yolo_camera.py` (e.g. `cv2.VideoCapture(1)`)
 
 **Slow inference on Raspberry Pi**
-- The included setup uses CPU-only PyTorch (`torch 2.13.0+cpu`), which is expected on ARM devices
-- Use `yolo11n.pt` (nano) rather than `yolo11s.pt` for better frame rates
+- The included setup uses CPU-only PyTorch, which is expected on ARM devices
+- Use the nano model rather than a larger one for better frame rates
 - Lower resolution or raise the confidence threshold to reduce work per frame
 
 **Module not found errors**
-- Confirm the virtual environment is activated (`source .venv/bin/activate`)
-- Reinstall dependencies: `pip install flask ultralytics opencv-python`
-
-**Cannot reach the web page from another device**
-- The server binds to `0.0.0.0:5000` by default
-- Check firewall rules and use the Pi's IP address, not `localhost`
+- Confirm the virtual environment is activated
+- Reinstall dependencies: `pip install ultralytics opencv-python`
