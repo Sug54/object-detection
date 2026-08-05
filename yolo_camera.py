@@ -1,17 +1,11 @@
 from ultralytics import YOLO
 import cv2
-import sys
 
 # Load YOLO model once
 model = YOLO("yolo26n.pt")
 
-# V4L2 on Linux/Pi, DirectShow on Windows
-if sys.platform == "win32":
-    backend = cv2.CAP_DSHOW
-else:
-    backend = cv2.CAP_V4L2
-
-camera = cv2.VideoCapture(0, backend)
+# V4L2 is the USB webcam path on Raspberry Pi / Linux
+camera = cv2.VideoCapture(0, cv2.CAP_V4L2)
 
 # Brio 100 is happiest at 720p/30; MJPEG keeps USB bandwidth down on a Pi
 camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))

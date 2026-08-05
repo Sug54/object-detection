@@ -23,7 +23,7 @@ pip install ultralytics opencv-python
 
 3. **Pi / Brio 100 tuning**
    - MJPEG 1280×720 @ 30 — less USB stutter than raw video
-   - V4L2 backend — correct for Linux/Pi
+   - V4L2 backend only (Pi/Linux — no Windows path)
    - Small camera buffer + grab/retrieve — show the latest frame, not a delayed one
    - `imgsz=320`, `conf=0.35` — more detections than 256/0.6, still fast enough on Pi CPU
    - `predict` instead of `track` — less CPU
