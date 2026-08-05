@@ -21,7 +21,7 @@ if not camera.isOpened():
 print("Camera opened. Press 'q' to quit.")
 
 while True:
-    # Drop stale buffered frames so the window stays near live
+    
     camera.grab()
     ret, frame = camera.retrieve()
 
