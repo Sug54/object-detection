@@ -95,10 +95,10 @@ Detection settings live in `yolo_camera.py`:
 | Setting    | Default      | Description                           |
 |------------|--------------|---------------------------------------|
 | Model      | `yolo26n.pt` | YOLO weights file                     |
-| Camera     | `0`          | OpenCV device index                   |
-| Resolution | 256×256      | Capture size                          |
-| Confidence | `0.6`        | Minimum detection confidence          |
-| Tracking   | enabled      | Objects persist with IDs across frames|
+| Camera     | `0`          | OpenCV / V4L2 device index            |
+| Capture    | 1280×720 MJPEG | Brio 100 friendly mode on Pi        |
+| Inference  | `imgsz=320`  | YOLO input size (Pi-friendly)         |
+| Confidence | `0.35`       | Minimum detection confidence          |
 
 To use a different model, change the model path in `yolo_camera.py`:
 
