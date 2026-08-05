@@ -15,7 +15,8 @@ camera.set(cv2.CAP_PROP_FPS, 30)
 camera.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 if not camera.isOpened():
-    raise Exception("Camera not found")
+    print("Camera not found")
+    exit()
 
 print("Camera opened. Press 'q' to quit.")
 
@@ -27,12 +28,11 @@ while True:
     if not ret:
         print("Failed to grab frame")
         break
-
-    # imgsz=320 keeps the Pi usable; conf=0.35 catches more objects
+    #smaller imgz for better stability; lower confindence for more objects
     results = model.predict(
         frame,
-        imgsz=320,
-        conf=0.35,
+        imgsz=256,
+        conf=0.2,
         verbose=False,
     )
 

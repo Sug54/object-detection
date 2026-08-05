@@ -51,8 +51,8 @@ object-detection/
 | Model      | `yolo26n.pt`   | Nano weights for Pi CPU        |
 | Backend    | V4L2           | USB webcam on Linux/Pi         |
 | Capture    | 1280×720 MJPEG | Brio 100–friendly              |
-| Inference  | `imgsz=320`    | Speed vs. detection balance    |
-| Confidence | `0.35`         | Lower = more boxes             |
+| Inference  | `imgsz=256`    | Speed vs. detection balance    |
+| Confidence | `0.2`         | Lower = more boxes             |
 | Mode       | `predict`      | No tracking IDs                |
 
 ## Troubleshooting
