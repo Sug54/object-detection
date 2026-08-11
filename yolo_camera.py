@@ -17,10 +17,30 @@ if not camera.isOpened():
     print("Camera not found")
     exit()
 
+
+# ---------------- VIDEO RECORDING ----------------
+
+# Codec used to create an MP4 video
+fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+
+# Create the output video file
+video_writer = cv2.VideoWriter(
+    "yolo_demo.mp4",    # File name
+    fourcc,             # Video codec
+    5.0,                # Playback FPS
+    (1280, 720)         # Video resolution
+)
+
+if not video_writer.isOpened():
+    print("Could not create video file")
+    camera.release()
+    exit()
+
+
 print("Camera opened. Press 'q' to quit.")
 
 while True:
-    
+
     ret, frame = camera.read()
 
     if not ret:
@@ -36,12 +56,27 @@ while True:
         verbose=False,
     )
 
+    # Draw YOLO bounding boxes and labels
     annotated_frame = results[0].plot()
+
+    # Save the annotated frame to the MP4 file
+    video_writer.write(annotated_frame)
+
+    # Display the annotated frame
     cv2.imshow("YOLO Object Detection", annotated_frame)
 
     # Detect keyboard input "q" and exit
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
+
+# Release camera
 camera.release()
+
+# Finish and close the video file
+video_writer.release()
+
+# Close OpenCV windows
 cv2.destroyAllWindows()
+
+print("Video saved as yolo_demo.mp4")
